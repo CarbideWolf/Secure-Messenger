@@ -1,11 +1,17 @@
 package com.carbidewolf.gui;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.carbidewolf.Core;
+
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * 
@@ -24,10 +30,11 @@ public class EncryptionGUI extends JFrame
 	 */
 	public EncryptionGUI()
 	{
+		setResizable(false);
 		
 		Color contentColour = new Color(39,39,39);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 830, 603);
+		setBounds(100, 100, 830, 593);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.BLACK);
 		contentPane.setForeground(Color.DARK_GRAY);
@@ -60,6 +67,11 @@ public class EncryptionGUI extends JFrame
 		contentPane.add(sendButton);
 		
 		JButton optionsButton = new JButton("Options");
+		optionsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				OptionGUI.init();
+			}
+		});
 		optionsButton.setBorderPainted(false);
 		optionsButton.setForeground(Color.GREEN);
 		optionsButton.setBackground(contentColour);

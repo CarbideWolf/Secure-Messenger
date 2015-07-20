@@ -2,6 +2,8 @@ package com.carbidewolf;
 
 import java.awt.EventQueue;
 
+import javax.swing.JFrame;
+
 import com.carbidewolf.gui.EncryptionGUI;
 
 /**
@@ -12,6 +14,8 @@ import com.carbidewolf.gui.EncryptionGUI;
 
 public class Core
 {
+	
+	public static JFrame mainFrame;
 	public static void main(String args[])
 	{
 		EventQueue.invokeLater(new Runnable()
@@ -20,8 +24,8 @@ public class Core
 			{
 				try
 				{
-					EncryptionGUI frame = new EncryptionGUI();
-					frame.setVisible(true);
+					mainFrame = new EncryptionGUI();
+					mainFrame.setVisible(true);
 				}
 				catch (Exception e)
 				{
