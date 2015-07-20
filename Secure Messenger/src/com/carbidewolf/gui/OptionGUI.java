@@ -13,7 +13,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.carbidewolf.io.BufferedWriterHelper;
+import com.carbidewolf.io.VariableStore;
+
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
 import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
@@ -84,6 +89,8 @@ public class OptionGUI extends JDialog
 	
 	private void saveOptions()
 	{
+		BufferedWriter bw = new BufferedWriterHelper().createPath(this.getClass().getClassLoader().getResource("").getPath()+"Options.txt", true);
+		BufferedWriterHelper helper = new BufferedWriterHelper();
 		
 	}
 }
