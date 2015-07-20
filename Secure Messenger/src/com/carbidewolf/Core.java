@@ -1,3 +1,9 @@
+/**
+ * 
+ * @author CarbideWolf
+ *
+ */
+
 package com.carbidewolf;
 
 import java.awt.EventQueue;
@@ -5,12 +11,6 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 import com.carbidewolf.gui.EncryptionGUI;
-
-/**
- * 
- * @author CarbideWolf
- *
- */
 
 public class Core
 {
