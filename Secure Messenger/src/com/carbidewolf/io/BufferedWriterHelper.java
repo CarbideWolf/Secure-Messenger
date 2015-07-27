@@ -6,18 +6,49 @@
 
 package com.carbidewolf.io;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 public class BufferedWriterHelper {
 	
-	public BufferedWriter createPath(String path, Boolean append)
+	public class WriterBase extends BufferedWriter{
+		final String path;
+		
+		/**
+		 * @param out
+		 * @throws IOException 
+		 */
+		public WriterBase(String path_, boolean append) throws IOException {
+			super(new FileWriter(new File(path_),true));
+			path = path_;
+		}
+		
+	}
+	
+	public class ReaderBase extends BufferedReader{
+		final String path;
+		
+		/**
+		 * @param out
+		 * @throws IOException 
+		 */
+		public ReaderBase(String path_) throws IOException {
+			super(new FileReader(new File(path_)));
+			path = path_;
+		}
+		
+	}
+	
+	public WriterBase createPath(String path, Boolean append)
 	{
 		try
 		{
-			return new BufferedWriter(new FileWriter(new File(path), append));
+			return new WriterBase(path, append);
 		}
 		catch (IOException e)
 		{
@@ -26,6 +57,22 @@ public class BufferedWriterHelper {
 		}
 		return null;
 	}
+	
+	public ReaderBase getPath(String path)
+	{
+		try
+		{
+			return new ReaderBase(path);
+		}
+		catch (IOException e)
+		{
+			System.out.println("Path " + path + " does not exist");
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	
 	public void addLine(BufferedWriter bw, String text)
 	{

@@ -9,18 +9,58 @@ package com.carbidewolf.io;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+
+import com.carbidewolf.io.BufferedWriterHelper.WriterBase;
 
 public class VariableStore
 {
 	BufferedWriterHelper bwh = new BufferedWriterHelper();
 	
-	public void storeInt(BufferedWriter bw, int i,String name)
-	{
-		bwh.addLine(bw, name + ":" + i);
+	private void deleteVar(WriterBase wb, String name) throws IOException {
+		File file = new File(this.getClass().getClassLoader().getResource("").getPath()+"tmpOption.txt");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+		BufferedReader br = new BufferedReader(new FileReader(new File(wb.path)));
+		String line;
+		line = br.readLine();
+		while(line != null)
+		{
+			if(line.startsWith("#")){
+				bw.write(line);
+				line = br.readLine();
+			}else{
+				if(line.length()>name.length()){
+					if(!line.substring(0, name.length()).equals(name))
+					{	
+						bw.write(line);
+					}
+				}else{
+					bw.write(line);
+				}
+				line = br.readLine();
+			}
+		}
+		br.close();
+		bw.close();
+		Files.copy(file.toPath(), new FileOutputStream(new File(wb.path)));
+		file.delete();
 	}
 	
+	public void storeInt(WriterBase wb, int i,String name)
+	{
+		try {
+			deleteVar(wb, name);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		bwh.addLine(wb, name + ":" + i);
+	}
+
 	public void storeInt(String path, int i, String name)
 	{
 		bwh.addLine(path, true,name + ":" + i);
@@ -34,11 +74,17 @@ public class VariableStore
 			line = br.readLine();
 			while(line != null)
 			{
-				if(line.substring(0, name.length()).equals(name))
-				{
-					return Integer.parseInt(line.substring(name.length()+1));
+				if(line.startsWith("#")){
+					line = br.readLine();
+				}else{
+					if(line.length()>name.length()){
+						if(line.substring(0, name.length()).equals(name))
+						{	
+							return Integer.parseInt(line.substring(name.length()+1));
+						}
+					}
+					line = br.readLine();
 				}
-				line = br.readLine();
 			}
 		}
 		catch (IOException e)
@@ -64,9 +110,14 @@ public class VariableStore
 		return -999;
 	}
 	
-	public void storeBoolean(BufferedWriter bw, boolean b,String name)
+	public void storeBoolean(WriterBase wb, boolean b,String name)
 	{
-		bwh.addLine(bw, name + ":" + b);
+		try {
+			deleteVar(wb, name);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		bwh.addLine(wb, name + ":" + b);
 	}
 	
 	public void storeBoolean(String path, boolean b, String name)
@@ -82,14 +133,20 @@ public class VariableStore
 			line = br.readLine();
 			while(line != null)
 			{
-				if(line.substring(0, name.length()).equals(name))
-				{
-					return Boolean.valueOf(line.substring(name.length()+1));
-				}else
-				{
+				if(line.startsWith("#")){
 					line = br.readLine();
+				}else{
+					if(line.length()>name.length()){
+						if(line.substring(0, name.length()).equals(name))
+						{
+							return Boolean.valueOf(line.substring(name.length()+1));
+						}
+					}
+					else
+					{
+						line = br.readLine();
+					}
 				}
-				
 			}
 		}
 		catch (IOException e)
@@ -115,9 +172,14 @@ public class VariableStore
 		return Fallback;
 	}
 	
-	public void storeString(BufferedWriter bw, String s,String name)
+	public void storeString(WriterBase wb, String s,String name)
 	{
-		bwh.addLine(bw, name + ":" + s);
+		try {
+			deleteVar(wb, name);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		bwh.addLine(wb, name + ":" + s);
 	}
 	
 	public void storeString(String path, String s, String name)
@@ -133,13 +195,20 @@ public class VariableStore
 			line = br.readLine();
 			while(line != null)
 			{
-				if(line.substring(0, name.length()).equals(name))
-				{
-					return line.substring(name.length()+1);
-				}
-				else
-				{
+				if(line.startsWith("#")){
 					line = br.readLine();
+				}else{
+					if(line.length()>name.length())
+					{
+						if(line.substring(0, name.length()).equals(name))
+						{
+							return line.substring(name.length()+1);
+						}
+					}
+					else
+					{
+						line = br.readLine();
+					}
 				}
 			}
 		}
@@ -166,9 +235,14 @@ public class VariableStore
 		return null;
 	}
 	
-	public void storeDouble(BufferedWriter bw, double d,String name)
+	public void storeDouble(WriterBase wb, double d,String name)
 	{
-		bwh.addLine(bw, name + ":" + d);
+		try {
+			deleteVar(wb, name);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		bwh.addLine(wb, name + ":" + d);
 	}
 	
 	public void storeDouble(String path, double d, String name)
@@ -184,13 +258,19 @@ public class VariableStore
 			line = br.readLine();
 			while(line != null)
 			{
-				if(line.substring(0, name.length()).equals(name))
-				{
-					return Double.valueOf(line.substring(name.length()+1));
-				}
-				else
-				{
+				if(line.startsWith("#")){
 					line = br.readLine();
+				}else{
+					if(line.length()>name.length()){
+						if(line.substring(0, name.length()).equals(name))
+						{
+							return Double.valueOf(line.substring(name.length()+1));
+						}
+					}					
+					else
+					{
+						line = br.readLine();
+					}
 				}
 			}
 		}
