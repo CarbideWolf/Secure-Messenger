@@ -14,15 +14,13 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.carbidewolf.Core;
 import com.carbidewolf.io.BufferedWriterHelper;
 import com.carbidewolf.io.BufferedWriterHelper.WriterBase;
 import com.carbidewolf.io.VariableStore;
 
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
@@ -31,9 +29,8 @@ import javax.swing.JTextField;
 @SuppressWarnings("serial")
 public class OptionGUI extends JDialog
 {
-	String optionFilePath = this.getClass().getClassLoader().getResource("").getPath()+"Options.txt";
-	WriterBase wb = new BufferedWriterHelper().createPath(optionFilePath, true);
-	BufferedReader br = new BufferedWriterHelper().getPath(optionFilePath);
+	WriterBase wb = new BufferedWriterHelper().createPath(Core.optionFilePath, true);
+	BufferedReader br = new BufferedWriterHelper().getPath(Core.optionFilePath);
 	VariableStore optionFile = new VariableStore();
 
 	private final JPanel contentPanel = new JPanel();

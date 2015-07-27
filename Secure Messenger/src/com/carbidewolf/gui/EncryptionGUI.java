@@ -57,6 +57,11 @@ public class EncryptionGUI extends JFrame
 		contentPane.add(SendTextArea);
 		
 		JButton sendButton = new JButton("Send");
+		sendButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		sendButton.setBorderPainted(false);
 		sendButton.setForeground(Color.GREEN);
 		sendButton.setBackground(contentColour);
