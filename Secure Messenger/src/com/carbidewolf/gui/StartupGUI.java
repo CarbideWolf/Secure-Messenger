@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import com.carbidewolf.Core;
 import com.carbidewolf.networking.Client;
 import com.carbidewolf.networking.Common;
+import com.carbidewolf.reference.Reference;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -79,7 +80,7 @@ public class StartupGUI extends JFrame {
 		connectButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(validateInput()){
-					
+					Reference.username = usernameField.getText();
 					dispose();
 					EventQueue.invokeLater(new Runnable()
 					{

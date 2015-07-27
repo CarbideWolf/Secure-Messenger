@@ -10,18 +10,28 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.carbidewolf.reference.Reference;
+import com.sun.webkit.graphics.Ref;
+
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
 public class EncryptionGUI extends JFrame
 {
 
+	boolean ctrlDown = false;
 	private JPanel contentPane;
-
+	private final JTextArea sendTextArea;
+	private JButton sendButton;
 	/**
 	 * Create the frame.
 	 */
@@ -39,7 +49,7 @@ public class EncryptionGUI extends JFrame
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JTextArea mainTextArea = new JTextArea();
+		final JTextArea mainTextArea = new JTextArea();
 		mainTextArea.setForeground(Color.GREEN);
 		mainTextArea.setEditable(false);
 		mainTextArea.setDisabledTextColor(Color.GREEN);
@@ -49,16 +59,52 @@ public class EncryptionGUI extends JFrame
 		mainTextArea.setBounds(30, 31, 754, 449);
 		contentPane.add(mainTextArea);
 		
-		JTextArea SendTextArea = new JTextArea();
-		SendTextArea.setForeground(Color.GREEN);
-		SendTextArea.setDisabledTextColor(Color.GREEN);
-		SendTextArea.setBackground(contentColour);
-		SendTextArea.setBounds(30, 512, 431, 22);
-		contentPane.add(SendTextArea);
+		sendTextArea = new JTextArea();
+		sendTextArea.setForeground(Color.GREEN);
+		sendTextArea.setDisabledTextColor(Color.GREEN);
+		sendTextArea.setBackground(contentColour);
+		sendTextArea.setBounds(30, 512, 431, 22);
+		contentPane.add(sendTextArea);
 		
-		JButton sendButton = new JButton("Send");
+		sendTextArea.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_CONTROL){
+					ctrlDown = false;
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER){
+					if(ctrlDown){
+						sendTextArea.append("\n");
+						System.out.println("added new line");
+					}else{
+						sendButton.doClick();
+					}
+				}else if(e.getKeyCode()==KeyEvent.VK_CONTROL){
+					ctrlDown = true;
+				}
+				
+			}
+		});
+		
+		sendButton = new JButton("Send");
 		sendButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				Calendar cal = Calendar.getInstance();
+				String messageText = dateFormat.format(cal.getTime()) + " " + Reference.username + ": " + sendTextArea.getText();
+				mainTextArea.append(messageText + "\n");
+				sendTextArea.setText("");
 				
 			}
 		});

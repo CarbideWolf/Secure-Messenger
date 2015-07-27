@@ -21,50 +21,101 @@ public class VariableStore
 {
 	BufferedWriterHelper bwh = new BufferedWriterHelper();
 	
-	private void deleteVar(WriterBase wb, String name) throws IOException {
-		File file = new File(this.getClass().getClassLoader().getResource("").getPath()+"tmpOption.txt");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-		BufferedReader br = new BufferedReader(new FileReader(new File(wb.path)));
-		String line;
-		line = br.readLine();
-		while(line != null)
-		{
-			if(line.startsWith("#")){
-				bw.write(line);
-				line = br.readLine();
-			}else{
-				if(line.length()>name.length()){
-					if(!line.substring(0, name.length()).equals(name))
-					{	
-						bw.write(line);
-					}
+	public void deleteVar(WriterBase wb, String name){
+		try{
+			File file = new File(this.getClass().getClassLoader().getResource("").getPath()+"tmpOption.txt");
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			BufferedReader br = new BufferedReader(new FileReader(new File(wb.path)));
+			String line;
+			line = br.readLine();
+			while(line != null)
+			{
+				if(line.startsWith("#")){
+					bwh.addLine(bw, line);
+					line = br.readLine();
 				}else{
-					bw.write(line);
+					if(line.length()>name.length()){
+						if(!line.substring(0, name.length()).equals(name))
+						{	
+							bwh.addLine(bw, line);
+						}
+					}else{
+						bwh.addLine(bw, line);
+					}
+					line = br.readLine();
 				}
-				line = br.readLine();
 			}
-		}
-		br.close();
-		bw.close();
-		Files.copy(file.toPath(), new FileOutputStream(new File(wb.path)));
-		file.delete();
-	}
-	
-	public void storeInt(WriterBase wb, int i,String name)
-	{
-		try {
-			deleteVar(wb, name);
-		} catch (IOException e) {
+			br.close();
+			bw.close();
+			Files.copy(file.toPath(), new FileOutputStream(new File(wb.path)));
+			file.delete();
+		}catch(IOException e){
 			e.printStackTrace();
 		}
-		bwh.addLine(wb, name + ":" + i);
 	}
-
-	public void storeInt(String path, int i, String name)
-	{
-		bwh.addLine(path, true,name + ":" + i);
+	
+	public void deleteVar(WriterBase wb, String[] names){
+		try{
+			File file = new File(this.getClass().getClassLoader().getResource("").getPath()+"tmpOption.txt");
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			BufferedReader br = new BufferedReader(new FileReader(new File(wb.path)));
+			String line;
+			line = br.readLine();
+			while(line != null)
+			{
+				if(line.startsWith("#")){
+					bw.write(line);
+					line = br.readLine();
+				}else{
+					boolean write = true;
+					for(String name : names){
+						if(line.length()>name.length()){
+							if(line.substring(0, name.length()).equals(name))
+							{	
+								write = false;
+								break;
+							}
+						}
+					}
+					if(write){
+						bwh.addLine(bw, line);
+					}
+					line = br.readLine();
+				}
+			}
+			br.close();
+			bw.close();
+			Files.copy(file.toPath(), new FileOutputStream(new File(wb.path)));
+			file.delete();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
-
+	
+	public void storeVar(WriterBase wb, String name, String value){
+		bwh.addLine(wb, name + ":" + value);
+	}
+	
+	public void storeVar(String path, String name, String value){
+		bwh.addLine(path, true,name + ":" + value);
+	}
+	
+	public void updateVar(WriterBase wb, String name, String value){
+		deleteVar(wb, name);
+		storeVar(wb, name, value);
+	}
+	
+	public void updateVars(WriterBase wb, String names[], String values[]){
+		try{
+			deleteVar(wb, names);
+			for(int i = 0; i < names.length; i++){
+				storeVar(wb, names[i], values[i]);
+			}
+		}catch(NullPointerException e){
+			e.printStackTrace();
+		}
+	}
+	
 	public int getInt(BufferedReader br, String name)
 	{
 		String line;
@@ -107,21 +158,6 @@ public class VariableStore
 			e.printStackTrace();
 		}
 		return -999;
-	}
-	
-	public void storeBoolean(WriterBase wb, boolean b,String name)
-	{
-		try {
-			deleteVar(wb, name);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		bwh.addLine(wb, name + ":" + b);
-	}
-	
-	public void storeBoolean(String path, boolean b, String name)
-	{
-		bwh.addLine(path, true,name + ":" + b);
 	}
 	
 	public boolean getBoolean(BufferedReader br, String name, Boolean Fallback)
@@ -171,21 +207,6 @@ public class VariableStore
 		return Fallback;
 	}
 	
-	public void storeString(WriterBase wb, String s,String name)
-	{
-		try {
-			deleteVar(wb, name);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		bwh.addLine(wb, name + ":" + s);
-	}
-	
-	public void storeString(String path, String s, String name)
-	{
-		bwh.addLine(path, true,name + ":" + s);
-	}
-	
 	public String getString(BufferedReader br, String name)
 	{
 		String line;
@@ -232,21 +253,6 @@ public class VariableStore
 			e.printStackTrace();
 		}
 		return null;
-	}
-	
-	public void storeDouble(WriterBase wb, double d,String name)
-	{
-		try {
-			deleteVar(wb, name);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		bwh.addLine(wb, name + ":" + d);
-	}
-	
-	public void storeDouble(String path, double d, String name)
-	{
-		bwh.addLine(path, true,name + ":" + d);
 	}
 	
 	public double getDouble(BufferedReader br, String name, double fallback)

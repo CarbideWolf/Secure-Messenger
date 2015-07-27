@@ -106,7 +106,7 @@ public class OptionGUI extends JDialog
 	}
 	
 	public void storeOptions() {
-		optionFile.storeString(wb, testVarTextField.getText(), "testVar");
+		optionFile.updateVar(wb, testVarTextField.getText(), "testVar");
 		
 		try {
 			wb.close();
