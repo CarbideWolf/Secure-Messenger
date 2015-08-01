@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.Dimension;
 
 @SuppressWarnings("serial")
 public class OptionGUI extends JDialog
@@ -36,43 +38,43 @@ public class OptionGUI extends JDialog
 	private final JPanel contentPanel = new JPanel();
 	private JTextField testVarTextField;
 
-	public static void init()
-	{
-		try
-		{
-			OptionGUI dialog = new OptionGUI();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
 	
-	public OptionGUI()
+	
+	public OptionGUI(int x, int y)
 	{
 		setModal(true);
-		setBounds(100, 100, 450, 300);
+		setBounds(x, y, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setForeground(Color.DARK_GRAY);
+		contentPanel.setBackground(Color.BLACK);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
 		JLabel lblTestVar = new JLabel("Test Var");
+		lblTestVar.setForeground(Color.GREEN);
 		lblTestVar.setBounds(10, 11, 46, 14);
 		contentPanel.add(lblTestVar);
 		
 		testVarTextField = new JTextField(optionFile.getString(br, "testVar"));
+		testVarTextField.setBorder(null);
+		testVarTextField.setForeground(Color.GREEN);
+		testVarTextField.setBackground(Core.contentColour);
 		testVarTextField.setBounds(66, 8, 86, 20);
 		contentPanel.add(testVarTextField);
 		testVarTextField.setColumns(10);
 		{
 			JPanel buttonPane = new JPanel();
+			buttonPane.setForeground(Color.DARK_GRAY);
+			buttonPane.setBackground(Color.BLACK);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
+				okButton.setBorder(null);
+				okButton.setPreferredSize(new Dimension(47, 23));
+				okButton.setForeground(Color.GREEN);
+				okButton.setBackground(Core.contentColour);
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						
@@ -89,6 +91,10 @@ public class OptionGUI extends JDialog
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.setBorder(null);
+				cancelButton.setPreferredSize(new Dimension(65, 23));
+				cancelButton.setForeground(Color.GREEN);
+				cancelButton.setBackground(Core.contentColour);
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						dispose();

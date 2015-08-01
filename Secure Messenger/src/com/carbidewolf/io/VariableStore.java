@@ -224,6 +224,10 @@ public class VariableStore
 						{
 							return line.substring(name.length()+1);
 						}
+						else
+						{
+							line = br.readLine();
+						}
 					}
 					else
 					{

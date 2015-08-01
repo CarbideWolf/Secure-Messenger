@@ -1,13 +1,13 @@
 package com.carbidewolf.gui;
 
 import java.awt.EventQueue;
+import java.awt.Point;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.carbidewolf.Core;
-import com.carbidewolf.networking.Client;
 import com.carbidewolf.networking.Common;
 import com.carbidewolf.reference.Reference;
 
@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 /**
  * TODO Annotate Class
@@ -31,65 +32,70 @@ public class StartupGUI extends JFrame {
 	private JTextField usernameField;
 	private JTextField ipField;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void init() {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					StartupGUI frame = new StartupGUI();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	
+
+	public StartupGUI(){
+		this(100, 100);
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public StartupGUI() {
+	public StartupGUI(int x, int y) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(x, y, 450, 300);
 		contentPane = new JPanel();
+		contentPane.setForeground(Color.DARK_GRAY);
+		contentPane.setBackground(Color.BLACK);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JLabel lblUsername = new JLabel("Username");
+		lblUsername.setForeground(Color.GREEN);
 		lblUsername.setBounds(30, 31, 89, 14);
 		contentPane.add(lblUsername);
 		
 		JLabel lblServerIp = new JLabel("Server IP");
+		lblServerIp.setForeground(Color.GREEN);
 		lblServerIp.setBounds(30, 84, 89, 14);
 		contentPane.add(lblServerIp);
 		
 		usernameField = new JTextField();
+		usernameField.setBorder(null);
+		usernameField.setForeground(Color.GREEN);
+		usernameField.setBackground(Core.contentColour);
 		usernameField.setBounds(129, 28, 275, 20);
 		contentPane.add(usernameField);
 		usernameField.setColumns(10);
 		
 		ipField = new JTextField();
+		ipField.setBorder(null);
+		ipField.setForeground(Color.GREEN);
+		ipField.setBackground(Core.contentColour);
 		ipField.setBounds(129, 81, 275, 20);
 		contentPane.add(ipField);
 		ipField.setColumns(10);
 		
 		JButton connectButton = new JButton("Connect");
+		connectButton.setBorder(null);
+		connectButton.setForeground(Color.GREEN);
+		connectButton.setBackground(Core.contentColour);
 		connectButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(validateInput()){
 					Reference.username = usernameField.getText();
-					dispose();
+					Reference.ip = ipField.getText();
 					EventQueue.invokeLater(new Runnable()
 					{
 						public void run()
 						{
 							try
 							{
-								Core.mainFrame = new EncryptionGUI();
-								Core.mainFrame.setVisible(true);
+								Point pos = Reference.startFrame.getLocationOnScreen();
+								Reference.mainFrame = new EncryptionGUI(pos.x, pos.y);
+								Reference.mainFrame.setVisible(true);
+								dispose();
 							}
 							catch (Exception e)
 							{
@@ -106,6 +112,9 @@ public class StartupGUI extends JFrame {
 		contentPane.add(connectButton);
 		
 		JButton hostButton = new JButton("Host");
+		hostButton.setBorder(null);
+		hostButton.setForeground(Color.GREEN);
+		hostButton.setBackground(Core.contentColour);
 		hostButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to host a server?", "Host Server?", JOptionPane.YES_NO_OPTION);
@@ -120,12 +129,12 @@ public class StartupGUI extends JFrame {
 	}
 	
 	public boolean validateInput(){
-		if(!Client.validIp(ipField.getText())){
-			return false;
-		}
-		if(!Client.serverUp(ipField.getText())){
-			return false;
-		}
+//		if(!Client.validIp(ipField.getText())){
+//			return false;
+//		}
+//		if(!Client.serverUp(ipField.getText())){
+//			return false;
+//		}
 		return true;
 	}
 }
