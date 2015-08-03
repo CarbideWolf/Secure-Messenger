@@ -1,9 +1,3 @@
-/**
- * 
- * @author Richousrick
- *
- */
-
 package com.carbidewolf.gui;
 
 import javax.swing.JFrame;
@@ -13,6 +7,10 @@ import javax.swing.border.EmptyBorder;
 
 import com.carbidewolf.reference.Reference;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
@@ -20,35 +18,40 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.awt.event.ActionEvent;
 
-@SuppressWarnings("serial")
+/**
+ * The menu that displays, sends and receives messages
+ * @author Richousrick 
+ */
 public class EncryptionGUI extends JFrame
 {
+	private static final long serialVersionUID = 1L;
+	/** Format of the date used in messages*/
 	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	Calendar cal = Calendar.getInstance();
+	/** a boolean wither the control button is being held down */
 	boolean ctrlDown = false;
-	private JPanel contentPane;
+	/** Text area Containing the text to be sent */
 	private final JTextArea sendTextArea;
+	/** Button that sends the text in the senddTextArea */
 	private JButton sendButton;
-	private JButton optionsButton;
+	/** Text area that contains all the Messages */
 	public JTextArea mainTextArea;
+	
 	/**
-	 * Create the frame.
+	 * Creates the menu
+	 * @param x coordinate of the menu
+	 * @param y coordinate of the menu
 	 */
 	public EncryptionGUI(int x, int y)
 	{
 		setResizable(false);
-		
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(x, y, 830, 593);
-		contentPane = new JPanel();
+		JPanel contentPane = new JPanel();
 		contentPane.setBackground(Color.BLACK);
 		contentPane.setForeground(Color.DARK_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -72,44 +75,32 @@ public class EncryptionGUI extends JFrame
 		sendTextArea.setBounds(30, 512, 431, 23);
 		contentPane.add(sendTextArea);
 		
-		sendTextArea.addKeyListener(new KeyListener() {
-			
+		// Makes control enter make new line and enter send the text
+		String TEXT_SUBMIT = "text-submit";
+		String INSERT_BREAK = "insert-break";
+		InputMap input = sendTextArea.getInputMap();
+	    KeyStroke enter = KeyStroke.getKeyStroke("ENTER");
+	    KeyStroke shiftEnter = KeyStroke.getKeyStroke("control ENTER");
+	    input.put(shiftEnter, INSERT_BREAK);  
+	    input.put(enter, TEXT_SUBMIT);
+
+	    ActionMap actions = sendTextArea.getActionMap();
+	    actions.put(TEXT_SUBMIT, new AbstractAction() {
+			private static final long serialVersionUID = 5154866482487106142L;
+
 			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if(e.getKeyCode()==KeyEvent.VK_CONTROL){
-					ctrlDown = false;
-				}
-			}
-			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode()==KeyEvent.VK_ENTER){
-					if(ctrlDown){
-						sendTextArea.append("\n");
-						System.out.println("added new line");
-					}else{
-						sendButton.doClick();
-					}
-				}else if(e.getKeyCode()==KeyEvent.VK_CONTROL){
-					ctrlDown = true;
-				}
-				
-			}
-		});
-		
+	        public void actionPerformed(ActionEvent e) {
+				sendButton.doClick();
+	        }
+	    });
 		sendButton = new JButton("Send");
 		sendButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(validText()){
-					String messageText = dateFormat.format(cal.getTime()) + " " + Reference.username + ": " + sendTextArea.getText();
-					mainTextArea.append(messageText + "\n");
-					Reference.outStream.println(sendTextArea.getText());
+					if(!checkCommand()){
+						addText(Reference.username + ": " + sendTextArea.getText(), false);
+						Reference.outStream.println(sendTextArea.getText());
+					}
 					sendTextArea.setText("");
 				}
 			}
@@ -150,7 +141,7 @@ public class EncryptionGUI extends JFrame
 		quitButton.setBounds(689, 511, 95, 23);
 		contentPane.add(quitButton);
 		
-		optionsButton = new JButton("Options");
+		JButton optionsButton = new JButton("Options");
 		optionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try
@@ -173,15 +164,50 @@ public class EncryptionGUI extends JFrame
 		contentPane.add(optionsButton);
 	}
 	
+	/** 
+	 * Validates the text to be sent 
+	 * @return If the validation is passed
+	 */
 	public boolean validText(){
-		if(sendTextArea.getText().length()>0 && !sendTextArea.getText().equals("") && !sendTextArea.getText().equals("\n")){
-			return true;
+		String noSpaces = sendTextArea.getText().replace(" ", "");
+		if(noSpaces.startsWith("\n") || noSpaces.endsWith("\n") || noSpaces.length()==0){
+			return false;
 		}
-	return false;
+	return true;
 	}
 	
-	public void addMessage(String text){
-		String messageText = dateFormat.format(cal.getTime()) + " " + Reference.otherUName + ": " + text;
+	/**
+	 * Adds text to a new line on the 
+	 * @param text
+	 * @param message
+	 */
+	public void addText(String text, boolean message){
+		Calendar cal = Calendar.getInstance();
+		String messageText;
+		if(message){
+			messageText = dateFormat.format(cal.getTime()) + " " + Reference.otherUName + ": " + text;
+		}else{
+			messageText = dateFormat.format(cal.getTime()) + " " + text;
+		}
+		
 		mainTextArea.append(messageText + "\n");
+	}
+	
+	/**
+	 * Checks if the text sent is a command
+	 * @return if the text was a command
+	 */
+	public boolean checkCommand(){
+		String[] values = sendTextArea.getText().trim().split(" ");
+		if(values.length>0){
+			if(values[0].startsWith("\\")){
+				if(values[0].equals("\\clear")){
+					mainTextArea.setText("");
+					
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

@@ -1,25 +1,25 @@
-/**
- * @author Richousrick
- *
- */
+
 package com.carbidewolf.networking;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 import com.carbidewolf.reference.Reference;
-
+/**
+ * This class runs the client side netcode
+ * @author Richousrick
+ */
 public class Client {
 	
 	public Socket socket;
 	public Client(String ip) throws InterruptedException {
 		try {
+			System.out.println("client console");
 			socket = new Socket(ip, Reference.port);
 			if(socket.isConnected()){
 				Reference.connected = true;
@@ -28,22 +28,16 @@ public class Client {
 				//TODO encrypt username
 				Reference.outStream.println(Reference.username);
 				Reference.outStream.flush();
-				String lastMessageRecieved = "";
-				String lastMessageSent = "";
-				
-				TimeUnit.MILLISECONDS.sleep(2000);
-				Reference.otherUName = Reference.in.readLine();
-				
-				Reference.mainFrame.addMessage(Reference.otherUName+" joined");
 				String messageRecieved;
+				TimeUnit.MILLISECONDS.sleep(200);
+				Reference.otherUName = Reference.in.readLine();
 				while(!socket.isClosed()){
 					TimeUnit.MILLISECONDS.sleep(100);
-					//read
-					
+					// Read
 					if((messageRecieved = Reference.in.readLine()) != null
 							&& !messageRecieved.equals("") && !messageRecieved.equals("\n")){
 						System.out.println(messageRecieved);
-						Reference.mainFrame.addMessage(messageRecieved);
+						Reference.mainFrame.addText(messageRecieved, true);
 					}
 				}
 			}
@@ -54,7 +48,12 @@ public class Client {
 			Reference.canConnect=false;
 		}
 	}
-	
+
+	/**
+	 * Validates the string against criteria to validate the ip
+	 * @param ip to check
+	 * @return If the validation is passed
+	 */
 	public static boolean validIp(String ip){
 		try{
 			if(ip == null){
@@ -63,6 +62,11 @@ public class Client {
 			if(ip.isEmpty()){
 				return false;
 			}
+			// Incase someone tries to connect to a server hosted on the same device
+			if(ip.equals("localhost")){
+				return true;
+			}
+			// Checks the ip is in the format I.I.I.I where I is a int from 0 to 255
 			String[] section = ip.split("\\.");
 			if(section.length !=4){
 				return false;
@@ -73,17 +77,10 @@ public class Client {
 					return false;
 				}
 			}
-//			if(!InetAddress.getByName(ip).isReachable(10000)){
-//				System.out.println("cant reach");
-//				return false;
-//			}
 			return true;
 		}catch(NumberFormatException e){
+			System.out.println("The Ip " + ip + " is not in the Format I.I.I.I where I is a int from 0 to 255");
 			e.printStackTrace();
-//		} catch (UnknownHostException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
 		}
 		return false;
 	}

@@ -1,6 +1,5 @@
 package com.carbidewolf.gui;
 
-import java.awt.EventQueue;
 import java.awt.Point;
 
 import javax.swing.JFrame;
@@ -16,31 +15,38 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 
 /**
- * TODO Annotate Class
- *
+ * The menu that allows you to create or connect to a server
  * @author Richousrick
- *
  */
-@SuppressWarnings("serial")
 public class StartupGUI extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField usernameField;
 	private JTextField ipField;
 
 	
-
+	/**
+	 * Create the menu with default position
+	 */
 	public StartupGUI(){
 		this(100, 100);
 	}
 
 	/**
-	 * Create the frame.
+	 * Creates the menu wit specified position
+	 * @param x coordinate of the menu
+	 * @param y coordinate of the menu
 	 */
 	public StartupGUI(int x, int y) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -116,6 +122,10 @@ public class StartupGUI extends JFrame {
 		contentPane.add(hostButton);
 	}
 	
+	/**
+	 * Validates the entered username
+	 * @return If it passes validation
+	 */
 	private boolean validUsername() {
 		if(usernameField.getText().length()>3){
 			return true;
@@ -123,16 +133,24 @@ public class StartupGUI extends JFrame {
 		return false;
 	}
 	
+	/**
+	 * Validates all entered text
+	 * @return If it passes validation
+	 */
 	private boolean validateInput(){
-//		if(!Client.validIp(ipField.getText())){
-//			return false;
-//		}
+		if(!Client.validIp(ipField.getText())){
+			return false;
+		}
 		return validUsername();
 	}
 	
-	public void runMainMenu(boolean timeout){
+	/**
+	 * Creates the network connection and sets up the main menu
+	 * @param client if the client side is to be created or server
+	 */
+	public void runMainMenu(boolean client){
 		Reference.username = usernameField.getText();
-		if(timeout){
+		if(client){
 			Reference.ip = ipField.getText();
 			Thread netThread = new Thread(){
 				public void run(){
@@ -164,6 +182,7 @@ public class StartupGUI extends JFrame {
 				if(Reference.canConnect){
 					Point pos = Reference.startFrame.getLocationOnScreen();
 					Reference.mainFrame = new EncryptionGUI(pos.x, pos.y);
+					Reference.mainFrame.setTitle(Reference.name+" -Client");
 					Reference.mainFrame.setVisible(true);
 					dispose();
 				}else{
@@ -177,11 +196,23 @@ public class StartupGUI extends JFrame {
 				e.printStackTrace();
 			}
 		}else{
-			Reference.ip = "localhost";
+			try {
+				URL whatismyip = new URL("http://checkip.amazonaws.com");
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+				                whatismyip.openStream()));
+	
+				
+				Reference.ip = in.readLine();
+				in.close();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			Thread netThread = new Thread(){
 				public void run(){
 					try {
-						Common.hostServer();
+						new Common();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -190,10 +221,9 @@ public class StartupGUI extends JFrame {
 			netThread.start();
 			Point pos = ((JFrame)Reference.startFrame).getLocationOnScreen();
 			Reference.mainFrame = new EncryptionGUI(pos.x, pos.y);
+			Reference.mainFrame.setTitle(Reference.name+" -Server");
 			Reference.mainFrame.setVisible(true);
 			dispose();
 		}
-		
-		
 	}
 }
