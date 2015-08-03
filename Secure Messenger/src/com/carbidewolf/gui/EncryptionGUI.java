@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import com.carbidewolf.Core;
 import com.carbidewolf.reference.Reference;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
@@ -31,12 +30,14 @@ import java.awt.event.ActionEvent;
 @SuppressWarnings("serial")
 public class EncryptionGUI extends JFrame
 {
-
+	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	Calendar cal = Calendar.getInstance();
 	boolean ctrlDown = false;
 	private JPanel contentPane;
 	private final JTextArea sendTextArea;
 	private JButton sendButton;
 	private JButton optionsButton;
+	public JTextArea mainTextArea;
 	/**
 	 * Create the frame.
 	 */
@@ -54,11 +55,11 @@ public class EncryptionGUI extends JFrame
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		final JTextArea mainTextArea = new JTextArea("Connected to " + Reference.ip + " As " + Reference.username);
+		mainTextArea = new JTextArea("Connected to " + Reference.ip + " As " + Reference.username+"\n");
 		mainTextArea.setForeground(Color.GREEN);
 		mainTextArea.setEditable(false);
 		mainTextArea.setDisabledTextColor(Color.GREEN);
-		mainTextArea.setBackground(Core.contentColour);
+		mainTextArea.setBackground(Reference.contentColour);
 		mainTextArea.setSelectionColor(Color.BLACK);
 		mainTextArea.setSelectedTextColor(Color.BLACK);
 		mainTextArea.setBounds(30, 31, 754, 449);
@@ -67,7 +68,7 @@ public class EncryptionGUI extends JFrame
 		sendTextArea = new JTextArea();
 		sendTextArea.setForeground(Color.GREEN);
 		sendTextArea.setDisabledTextColor(Color.GREEN);
-		sendTextArea.setBackground(Core.contentColour);
+		sendTextArea.setBackground(Reference.contentColour);
 		sendTextArea.setBounds(30, 512, 431, 23);
 		contentPane.add(sendTextArea);
 		
@@ -106,17 +107,16 @@ public class EncryptionGUI extends JFrame
 		sendButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(validText()){
-					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-				Calendar cal = Calendar.getInstance();
-				String messageText = dateFormat.format(cal.getTime()) + " " + Reference.username + ": " + sendTextArea.getText();
-				mainTextArea.append(messageText + "\n");
-				sendTextArea.setText("");
+					String messageText = dateFormat.format(cal.getTime()) + " " + Reference.username + ": " + sendTextArea.getText();
+					mainTextArea.append(messageText + "\n");
+					Reference.outStream.println(sendTextArea.getText());
+					sendTextArea.setText("");
 				}
 			}
 		});
 		sendButton.setBorderPainted(false);
 		sendButton.setForeground(Color.GREEN);
-		sendButton.setBackground(Core.contentColour);
+		sendButton.setBackground(Reference.contentColour);
 		sendButton.setBounds(471, 511, 95, 23);
 		contentPane.add(sendButton);
 		
@@ -146,7 +146,7 @@ public class EncryptionGUI extends JFrame
 		});
 		quitButton.setBorderPainted(false);
 		quitButton.setForeground(Color.GREEN);
-		quitButton.setBackground(Core.contentColour);
+		quitButton.setBackground(Reference.contentColour);
 		quitButton.setBounds(689, 511, 95, 23);
 		contentPane.add(quitButton);
 		
@@ -174,9 +174,14 @@ public class EncryptionGUI extends JFrame
 	}
 	
 	public boolean validText(){
-		if(sendTextArea.getText().length()>0){
+		if(sendTextArea.getText().length()>0 && !sendTextArea.getText().equals("") && !sendTextArea.getText().equals("\n")){
 			return true;
 		}
 	return false;
+	}
+	
+	public void addMessage(String text){
+		String messageText = dateFormat.format(cal.getTime()) + " " + Reference.otherUName + ": " + text;
+		mainTextArea.append(messageText + "\n");
 	}
 }

@@ -18,6 +18,7 @@ import com.carbidewolf.Core;
 import com.carbidewolf.io.BufferedWriterHelper;
 import com.carbidewolf.io.BufferedWriterHelper.WriterBase;
 import com.carbidewolf.io.VariableStore;
+import com.carbidewolf.reference.Reference;
 
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -59,7 +60,7 @@ public class OptionGUI extends JDialog
 		testVarTextField = new JTextField(optionFile.getString(br, "testVar"));
 		testVarTextField.setBorder(null);
 		testVarTextField.setForeground(Color.GREEN);
-		testVarTextField.setBackground(Core.contentColour);
+		testVarTextField.setBackground(Reference.contentColour);
 		testVarTextField.setBounds(66, 8, 86, 20);
 		contentPanel.add(testVarTextField);
 		testVarTextField.setColumns(10);
@@ -74,7 +75,7 @@ public class OptionGUI extends JDialog
 				okButton.setBorder(null);
 				okButton.setPreferredSize(new Dimension(47, 23));
 				okButton.setForeground(Color.GREEN);
-				okButton.setBackground(Core.contentColour);
+				okButton.setBackground(Reference.contentColour);
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						
@@ -94,7 +95,7 @@ public class OptionGUI extends JDialog
 				cancelButton.setBorder(null);
 				cancelButton.setPreferredSize(new Dimension(65, 23));
 				cancelButton.setForeground(Color.GREEN);
-				cancelButton.setBackground(Core.contentColour);
+				cancelButton.setBackground(Reference.contentColour);
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						dispose();

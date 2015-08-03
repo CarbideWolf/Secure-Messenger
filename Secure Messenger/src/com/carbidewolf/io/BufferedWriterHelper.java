@@ -19,7 +19,7 @@ public class BufferedWriterHelper {
 		final String path;
 		
 		/**
-		 * @param out
+		 * @param in
 		 * @throws IOException 
 		 */
 		public WriterBase(String path_, boolean append) throws IOException {
@@ -33,7 +33,7 @@ public class BufferedWriterHelper {
 		final String path;
 		
 		/**
-		 * @param out
+		 * @param in
 		 * @throws IOException 
 		 */
 		public ReaderBase(String path_) throws IOException {
